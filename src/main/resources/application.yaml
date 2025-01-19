@@ -1,0 +1,18 @@
+spring:
+    config:
+        import: optional:file:.env[.properties]
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+    datasource:
+        url: ${DB_URL}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+
+    mail:
+        host: ${MAIL_HOST}
+        port: ${MAIL_PORT}
+        username: ${MAIL_USERNAME}
+        password: ${MAIL_PASSWORD}
+
+
