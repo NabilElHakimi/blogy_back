@@ -3,9 +3,11 @@ package me.elhakimi.blogy.service;
 import lombok.AllArgsConstructor;
 import me.elhakimi.blogy.domain.AppUser;
 import me.elhakimi.blogy.repository.UserRepository;
+import me.elhakimi.blogy.utils.RandomTextUtil;
 import me.elhakimi.blogy.utils.SendEmail;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -16,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final SendEmail sendEmail;
+    private final RandomTextUtil randomTextUtil;
 
     public AppUser saveUser(String email) {
 
@@ -78,5 +81,32 @@ public class UserService {
 
     }
 
+    public String login (String email) {
+        AppUser user =  userRepository.findUserByEmail(email);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User with email does not exist.");
+        }
+
+        if(!user.isActivated()) {
+            throw new IllegalArgumentException("User is not activated.");
+        }
+
+        user.setLoginCode(email+ "_" +RandomTextUtil.generateRandomText(8)+ "_" +LocalDate.now());
+        user.setActivationCodeExpiresAt(LocalDateTime.now().plusHours(24));
+
+        userRepository.save(user);
+
+        return user.getLoginCode();
+
+    }
+
+    public AppUser findUserByLoginCode(String loginCode) {
+        AppUser user = userRepository.findUsersByLoginCode(loginCode);
+        if (user == null) {
+            throw new IllegalArgumentException("User with login code does not exist.");
+        }
+        return user;
+    }
 
 }

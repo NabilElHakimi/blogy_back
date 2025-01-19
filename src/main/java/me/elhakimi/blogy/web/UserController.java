@@ -1,6 +1,7 @@
 package me.elhakimi.blogy.web;
 
 import lombok.AllArgsConstructor;
+import me.elhakimi.blogy.domain.AppUser;
 import me.elhakimi.blogy.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,15 @@ public class UserController {
         }
 
         return ResponseEntity.badRequest().body("User does not exist");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String email) {
+        String user = userService.login(email);
+        if(user != null) {
+            return ResponseEntity.ok(user );
+        }
+        return ResponseEntity.badRequest().body("Invalid email or password");
     }
 
 }
