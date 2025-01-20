@@ -1,14 +1,16 @@
 package me.elhakimi.blogy.service;
 
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import me.elhakimi.blogy.domain.Blog;
+import me.elhakimi.blogy.domain.Images;
 import me.elhakimi.blogy.repository.BlogRepository;
-import org.hibernate.engine.jdbc.BlobProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,18 +21,34 @@ import java.util.Random;
 public class BlogService {
 
     private final BlogRepository blogRepository;
+    private final StorageService storageService;
 
-
-    public Blog save(Blog blog) {
+    @Transactional
+    public Blog save(Blog blog , MultipartFile[] images) {
         if(blog.getAuthor() == null) {
+
+            for (MultipartFile image : images) {
+                   String imageUrl = storageService.uploadFile(image , "blogs");
+                     if (imageUrl == null || imageUrl.isEmpty()) {
+                          throw new RuntimeException("Failed to upload image.");
+                     }
+
+                Images img = new Images();
+                img.setImageUrl(imageUrl);
+                img.setBlog(blog);
+                blog.getImages().add(img);
+            }
+
 
             Random random = new Random();
             int randomInt = random.nextInt(999999999);
             blog.setAuthor("Anonymous_" + randomInt);
+            blog.setCreatedDate(LocalDateTime.now());
+            blogRepository.save(blog);
 
         }
 
-        blog.setCreatedDate(LocalDateTime.now());
+
 
         return blogRepository.save(blog);
     }

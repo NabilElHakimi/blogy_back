@@ -24,8 +24,8 @@ public class Blog {
     private String title;
     private String content;
 
-    @OneToMany(mappedBy = "blog")
-    private List<Image> image;
+    @OneToMany(mappedBy = "blog" , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    private List<Images> images;
     private LocalDateTime createdDate;
     private boolean published = false ;
 

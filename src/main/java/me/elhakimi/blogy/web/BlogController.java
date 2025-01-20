@@ -16,10 +16,10 @@ public class BlogController {
 
     private final BlogService blogService;
 
-    @PostMapping
-    public ResponseEntity<?> save(@RequestBody Blog blog) {
-        return ResponseEntity.ok(blogService.save(blog));
-    }
+//    @PostMapping
+//    public ResponseEntity<?> save(@RequestBody Blog blog) {
+//        return ResponseEntity.ok(blogService.save(blog));
+//    }
 
     @GetMapping("/published")
     public ResponseEntity<?> getPublishedBlogs(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
