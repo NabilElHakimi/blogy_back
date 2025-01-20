@@ -5,8 +5,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import me.elhakimi.blogy.domain.Blog;
 import me.elhakimi.blogy.domain.Images;
+import me.elhakimi.blogy.dtos.BlogDTO;
 import me.elhakimi.blogy.repository.BlogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class BlogService {
     private final StorageService storageService;
 
     @Transactional
-    public Blog save(Blog blog , MultipartFile[] images) {
+    public BlogDTO save(Blog blog , MultipartFile[] images) {
         if(blog.getAuthor() == null) {
 
             for (MultipartFile image : images) {
@@ -40,7 +40,6 @@ public class BlogService {
 
             }
 
-
             Random random = new Random();
             int randomInt = random.nextInt(999999);
             blog.setAuthor("Anonymous_" + randomInt);
@@ -48,12 +47,12 @@ public class BlogService {
 
         }
 
-        return blogRepository.save(blog);
+        return BlogDTO.from(blogRepository.save(blog));
     }
 
-    public Page<Blog> findAllByPublishedIsTrue(int page, int size) {
+    public Page<BlogDTO> findAllByPublishedIsTrue(int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
-        return blogRepository.findAllByPublishedIsTrueOrderByCreatedDateDesc(pageable);
+        return blogRepository.findAllByPublishedIsTrueOrderByCreatedDateDesc(pageable).map(BlogDTO::from);
     }
 
     public Blog findById(Long id) {
