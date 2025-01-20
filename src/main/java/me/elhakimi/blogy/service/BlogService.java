@@ -37,18 +37,16 @@ public class BlogService {
                 img.setImageUrl(imageUrl);
                 img.setBlog(blog);
                 blog.getImages().add(img);
+
             }
 
 
             Random random = new Random();
-            int randomInt = random.nextInt(999999999);
+            int randomInt = random.nextInt(999999);
             blog.setAuthor("Anonymous_" + randomInt);
             blog.setCreatedDate(LocalDateTime.now());
-            blogRepository.save(blog);
 
         }
-
-
 
         return blogRepository.save(blog);
     }

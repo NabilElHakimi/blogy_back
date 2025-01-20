@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class Blog {
     private String content;
 
     @OneToMany(mappedBy = "blog" , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-    private List<Images> images;
+    private List<Images> images = new ArrayList<>();
     private LocalDateTime createdDate;
     private boolean published = false ;
 
